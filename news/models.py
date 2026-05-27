@@ -28,3 +28,19 @@ class Theme(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+class StockTheme(models.Model):
+    stock = models.ForeignKey(Stock, on_delete=models.CASCADE, related_name="theme_relations")
+    theme = models.ForeignKey(Theme,on_delete=models.CASCADE, related_name="stock_relations")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["stock", "theme"],name="unique_stock_theme")
+        ]
+
+    def __str__(self):
+        return f"{self.stock.stock_name} - {self.theme.name}"
