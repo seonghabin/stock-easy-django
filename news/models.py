@@ -18,3 +18,13 @@ class Stock(models.Model):
 
     def __str__(self):
         return f"{self.stock_name}({self.stock_code})"
+
+
+class Theme(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
