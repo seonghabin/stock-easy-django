@@ -24,3 +24,17 @@ class NewsStock(models.Model):
 
     def __str__(self):
         return f"{self.news.title} - {self.stock.stock_name}"
+    
+    
+class NewsTheme(models.Model):
+    news = models.ForeignKey(News, on_delete=models.CASCADE, related_name="news_themes")
+    theme = models.ForeignKey("stocks.Theme", on_delete=models.CASCADE, related_name="news_themes")
+    relation_reason = models.TextField(blank=True, null=True)
+    confidence_score = models.FloatField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["news", "theme"], name="unique_news_theme")]
+
+    def __str__(self):
+        return f"{self.news.title} - {self.theme.name}"
