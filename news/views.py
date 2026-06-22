@@ -8,7 +8,7 @@ from .serializers import *
 @api_view(["GET"])
 def news_list(request):
     news_qs = News.objects.all().order_by("-published_at")
-    serializer = NewsListSerializer(news_qs, many=True)
+    serializer = NewsSerializer(news_qs, many=True)
     return Response(serializer.data)
 
 
