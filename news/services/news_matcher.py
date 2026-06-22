@@ -4,7 +4,6 @@ News 매칭 파이프라인
 1차 구현
 뉴스에서 직접 언급된 기업명 매칭
 → NewsStock 저장
-→ 테마 페이지에서 Theme → StockTheme → NewsStock → News 조회
 
 2차 AI 보완 (TODO)
 기업명이 직접 안 나온 뉴스
