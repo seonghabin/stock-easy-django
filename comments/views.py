@@ -37,3 +37,28 @@ def comment_create(request, news_id):
         serializer.errors,
         status=status.HTTP_400_BAD_REQUEST,
     )
+    
+@api_view(["PATCH"])
+@permission_classes([IsAuthenticated])
+def comment_update(request, comment_id):
+    try:
+        comment = Comment.objects.get(id=comment_id)
+    except Comment.DoesNotExist:
+        return Response(
+            {"detail": "댓글을 찾을 수 없습니다."},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+    if comment.user != request.user:
+        return Response(
+            {"detail": "댓글 작성자만 수정할 수 있습니다."},
+            status=status.HTTP_403_FORBIDDEN,
+        )
+
+    serializer = CommentSerializer(comment, data=request.data, partial=True)
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

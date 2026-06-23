@@ -6,4 +6,6 @@ app_name = "comments"
 
 urlpatterns = [
     path("news/<int:news_id>/", views.comment_create),
+    path("<int:comment_id>/", views.comment_update),
+
 ]
