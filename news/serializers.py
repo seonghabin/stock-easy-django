@@ -32,7 +32,7 @@ class NewsSerializer(serializers.ModelSerializer):
         ]
 
     def get_related_stocks(self, obj):
-        stocks = Stock.objects.filter(newsstock__news=obj)
+        stocks = Stock.objects.filter(news_stocks__news=obj)
         return RelatedStockSerializer(stocks, many=True).data
 
 
@@ -56,6 +56,7 @@ class NewsDetailSerializer(serializers.ModelSerializer):
             "ai_analysis",
             "related_stocks",
         ]
+
     def get_related_stocks(self, obj):
-        stocks = Stock.objects.filter(newsstock__news=obj)
+        stocks = Stock.objects.filter(news_stocks__news=obj)
         return RelatedStockSerializer(stocks, many=True).data
