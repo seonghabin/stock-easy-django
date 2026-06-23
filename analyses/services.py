@@ -32,8 +32,10 @@ def get_or_create_ai_analysis(news): #실제 news/view/news_detail 에서 사용
             news=news,
             rewritten_content=data["rewritten_content"],
             sentiment=data["sentiment"],
+            sentiment_reason=data["sentiment_reason"],
             impact_score=data["impact_score"],
             impact_reason=data["impact_reason"],
+            highlight=data.get("highlight"),
             difficult_terms=data.get("difficult_terms"),
             check_points=data.get("check_points"),
             status="success",
@@ -41,12 +43,15 @@ def get_or_create_ai_analysis(news): #실제 news/view/news_detail 에서 사용
         )
 
     except Exception as e:
+
         return AiAnalysis.objects.create(
             news=news,
             rewritten_content="",
             sentiment="neutral",
+            sentiment_reason="AI 분석에 실패하여 감정 분석 근거를 생성하지 못했습니다.",
             impact_score=0.0,
-            impact_reason="",
+            impact_reason="AI 분석에 실패하여 영향도 근거를 생성하지 못했습니다.",
+            highlight=None,
             difficult_terms=None,
             check_points=None,
             status="failed",
