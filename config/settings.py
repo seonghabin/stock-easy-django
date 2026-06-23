@@ -25,7 +25,7 @@ INSTALLED_APPS = [
     "stocks",
     "news",
     "analyses",
-    "comments"
+    "comments",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
