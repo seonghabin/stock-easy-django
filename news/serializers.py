@@ -1,23 +1,22 @@
 from rest_framework import serializers
-from .models import News, NewsStock
+from stocks.models import Stock
+from .models import News
 from analyses.serializers import AiAnalysisSerializer
 
 
-class NewsStockSerializer(serializers.ModelSerializer):
-    stock_id = serializers.IntegerField(source="stock.id", read_only=True)
-    stock_name = serializers.CharField(source="stock.stock_name", read_only=True)
-    stock_code = serializers.CharField(source="stock.stock_code", read_only=True)
-
+class RelatedStockSerializer(serializers.ModelSerializer):
     class Meta:
-        model = NewsStock
+        model = Stock
         fields = [
-            "stock_id",
-            "stock_name",
+            "id",
             "stock_code",
+            "stock_name",
         ]
 
 
 class NewsSerializer(serializers.ModelSerializer):
+    related_stocks = serializers.SerializerMethodField()
+
     class Meta:
         model = News
         fields = [
@@ -27,14 +26,21 @@ class NewsSerializer(serializers.ModelSerializer):
             "publisher",
             "published_at",
             "thumbnail_url",
-            "url"
+            "url",
+
+            "related_stocks",
         ]
+
+    def get_related_stocks(self, obj):
+        stocks = Stock.objects.filter(newsstock__news=obj)
+        return RelatedStockSerializer(stocks, many=True).data
+
 
 class NewsDetailSerializer(serializers.ModelSerializer):
     ai_analysis = AiAnalysisSerializer(read_only=True)
-    news_stocks = NewsStockSerializer(many=True, read_only=True)
-    class Meta:
+    related_stocks = serializers.SerializerMethodField()
 
+    class Meta:
         model = News
         fields = [
             "id",
@@ -48,5 +54,8 @@ class NewsDetailSerializer(serializers.ModelSerializer):
             "thumbnail_url",
             
             "ai_analysis",
-            "news_stocks",
+            "related_stocks",
         ]
+    def get_related_stocks(self, obj):
+        stocks = Stock.objects.filter(newsstock__news=obj)
+        return RelatedStockSerializer(stocks, many=True).data
