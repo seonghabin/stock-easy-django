@@ -1,5 +1,9 @@
 from django.urls import path
+from . import views
+
 
 app_name = "comments"
 
-urlpatterns = []
+urlpatterns = [
+    path("news/<int:news_id>/", views.comment_create),
+]
