@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import News
-
+from analyses.serializers import AiAnalysisSerializer
 
 class NewsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -16,6 +16,8 @@ class NewsSerializer(serializers.ModelSerializer):
         ]
 
 class NewsDetailSerializer(serializers.ModelSerializer):
+    ai_analysis = AiAnalysisSerializer(read_only=True)
+    
     class Meta:
         model = News
         fields = [
@@ -28,4 +30,6 @@ class NewsDetailSerializer(serializers.ModelSerializer):
             "publisher",
             "published_at",
             "thumbnail_url",
+            
+            "ai_analysis",
         ]

@@ -5,6 +5,8 @@ from .models import *
 from stocks.models import StockTheme
 from .serializers import *
 
+from analyses.services import get_or_create_ai_analysis
+
 
 @api_view(["GET"])
 def news_list(request):
@@ -20,8 +22,11 @@ def news_detail(request, news_id):
     except News.DoesNotExist:
         return Response({"detail": "Not found"}, status=404)
 
+    get_or_create_ai_analysis(news)
+
     serializer = NewsDetailSerializer(news)
     return Response(serializer.data)
+
 
 @api_view(["GET"])
 def stock_news(request, stock_id):
@@ -29,6 +34,7 @@ def stock_news(request, stock_id):
     news_list = [ns.news for ns in news_qs]
     serializer = NewsSerializer(news_list, many=True)
     return Response(serializer.data)
+
 
 @api_view(["GET"])
 def theme_news(request, theme_id):
