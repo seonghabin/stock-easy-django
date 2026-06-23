@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 class Stock(models.Model):
@@ -44,3 +45,18 @@ class StockTheme(models.Model):
 
     def __str__(self):
         return f"{self.stock.stock_name} - {self.theme.name}"
+    
+
+
+class InterestStock(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="interest_stocks")
+    stock = models.ForeignKey(Stock, on_delete=models.CASCADE, related_name="interested_users")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["user", "stock"], name="unique_user_stock_interest")
+        ]
+
+    def __str__(self):
+        return f"{self.user} - {self.stock.stock_name}"

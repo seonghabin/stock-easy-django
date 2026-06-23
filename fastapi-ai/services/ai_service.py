@@ -117,4 +117,4 @@ def analyze_news_with_ai(title: str, content: str) -> dict:
         }
     )
 
-    return json.loads(response.content)
+    return json.loads(response.content, strict=False)
