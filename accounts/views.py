@@ -43,3 +43,9 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return Response({"detail": "로그아웃되었습니다."}, status=status.HTTP_200_OK)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def me(request):
+    return Response(UserSerializer(request.user).data, status=status.HTTP_200_OK)
