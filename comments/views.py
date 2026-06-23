@@ -80,3 +80,24 @@ def comment_list(request, news_id):
     serializer = CommentSerializer(comments, many=True)
 
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def comment_delete(request, comment_id):
+    try:
+        comment = Comment.objects.get(id=comment_id)
+    except Comment.DoesNotExist:
+        return Response(
+            {"detail": "댓글을 찾을 수 없습니다."},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+    if comment.user != request.user:
+        return Response(
+            {"detail": "댓글 작성자만 삭제할 수 있습니다."},
+            status=status.HTTP_403_FORBIDDEN,
+        )
+
+    comment.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
