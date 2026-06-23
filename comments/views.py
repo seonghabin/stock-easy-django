@@ -1,6 +1,6 @@
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 
 from news.models import News
@@ -38,6 +38,7 @@ def comment_create(request, news_id):
         status=status.HTTP_400_BAD_REQUEST,
     )
     
+    
 @api_view(["PATCH"])
 @permission_classes([IsAuthenticated])
 def comment_update(request, comment_id):
@@ -62,3 +63,20 @@ def comment_update(request, comment_id):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def comment_list(request, news_id):
+    try:
+        news = News.objects.get(id=news_id)
+    except News.DoesNotExist:
+        return Response(
+            {"detail": "뉴스를 찾을 수 없습니다."},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+    comments = Comment.objects.filter(news=news).select_related("user")
+    serializer = CommentSerializer(comments, many=True)
+
+    return Response(serializer.data, status=status.HTTP_200_OK)
