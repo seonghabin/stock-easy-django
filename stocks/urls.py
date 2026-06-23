@@ -7,4 +7,5 @@ app_name = "stocks"
 urlpatterns = [
     path("", views.stock_list),
     path("interests/", views.interest_stock_list_create),
+    path("interests/<int:pk>/", views.interest_stock_delete),
 ]

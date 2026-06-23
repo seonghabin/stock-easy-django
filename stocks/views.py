@@ -65,3 +65,20 @@ def interest_stock_list_create(request):
 
     serializer = InterestStockSerializer(interest_stock)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def interest_stock_delete(request, pk):
+    try:
+        interest_stock = InterestStock.objects.get(
+            id=pk,
+            user=request.user,
+        )
+    except InterestStock.DoesNotExist:
+        return Response(
+            {"detail": "관심종목을 찾을 수 없습니다."},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+    interest_stock.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
