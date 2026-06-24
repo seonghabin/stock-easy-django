@@ -5,8 +5,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
-from .models import Stock, InterestStock
-from .serializers import StockSerializer, InterestStockSerializer
+from .models import Stock, InterestStock, Theme
+from .serializers import StockSerializer, InterestStockSerializer, ThemeSerializer
 
 
 @api_view(["GET"])
@@ -82,3 +82,13 @@ def interest_stock_delete(request, pk):
 
     interest_stock.delete()
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def recommended_theme_list(request):
+    interest_stock_ids = InterestStock.objects.filter(user=request.user).values_list("stock_id", flat=True)
+    themes = Theme.objects.filter(stock_relations__stock_id__in=interest_stock_ids).distinct().order_by("name")[:5]
+
+    serializer = ThemeSerializer(themes, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
