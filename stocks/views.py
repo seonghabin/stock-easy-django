@@ -87,8 +87,22 @@ def interest_stock_delete(request, pk):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def recommended_theme_list(request):
-    interest_stock_ids = InterestStock.objects.filter(user=request.user).values_list("stock_id", flat=True)
-    themes = Theme.objects.filter(stock_relations__stock_id__in=interest_stock_ids).distinct().order_by("name")[:5]
+    interest_stocks = InterestStock.objects.filter(
+        user=request.user
+    ).select_related("stock").order_by("created_at")
+
+    themes = []
+    seen_theme_ids = set()
+
+    for interest_stock in interest_stocks:
+        stock_themes = Theme.objects.filter(
+            stock_relations__stock=interest_stock.stock
+        ).order_by("name")[:5]
+
+        for theme in stock_themes:
+            if theme.id not in seen_theme_ids:
+                themes.append(theme)
+                seen_theme_ids.add(theme.id)
 
     serializer = ThemeSerializer(themes, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
