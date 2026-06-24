@@ -43,3 +43,16 @@ class NewsTheme(models.Model):
 
     def __str__(self):
         return f"{self.news.title} - {self.theme.name}"
+
+class SavedNews(models.Model):
+    user = models.ForeignKey("accounts.User", on_delete=models.CASCADE, related_name="saved_news",)
+    news = models.ForeignKey(News, on_delete=models.CASCADE, related_name="saved_news")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["user", "news"], name="unique_user_saved_news")
+        ]
+
+    def __str__(self):
+        return f"{self.user.email} - {self.news.title}"
