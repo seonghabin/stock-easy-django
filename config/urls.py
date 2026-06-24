@@ -9,5 +9,5 @@ urlpatterns = [
     path("api/v1/news/", include("news.urls")),
     path("api/v1/analyses/", include("analyses.urls")),
     path("api/v1/comments/", include("comments.urls")),
-
+    path("api/v1/terms/", include("terms.urls")),
 ]
