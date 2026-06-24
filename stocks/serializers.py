@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Stock, InterestStock
+from .models import Stock, InterestStock, Theme
 
 
 class StockSerializer(serializers.ModelSerializer):
@@ -25,3 +25,9 @@ class InterestStockSerializer(serializers.ModelSerializer):
             "stock",
             "created_at",
         ]
+
+
+class ThemeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Theme
+        fields = ["id", "name"]
