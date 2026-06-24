@@ -94,3 +94,21 @@ def saved_news_list_create(request):
 
     serializer = SavedNewsSerializer(saved_news)
     return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
+def saved_news_delete(request, pk):
+    try:
+        saved_news = SavedNews.objects.get(
+            id=pk,
+            user=request.user,
+        )
+    except SavedNews.DoesNotExist:
+        return Response(
+            {"detail": "저장된 뉴스를 찾을 수 없습니다."},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+
+    saved_news.delete()
+    return Response(status=status.HTTP_204_NO_CONTENT)
