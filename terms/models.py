@@ -16,12 +16,13 @@ class Term(models.Model):
 class UserTerm(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="saved_terms")
     term = models.ForeignKey(Term, on_delete=models.CASCADE, related_name="saved_users")
+    news = models.ForeignKey("news.News", on_delete=models.CASCADE, related_name="user_terms", null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=["user", "term"],name="unique_user_term")
+            models.UniqueConstraint(fields=["user", "term", "news"], name="unique_user_term_news",)
         ]
 
     def __str__(self):
-        return f"{self.user} - {self.term.name}"
+        return f"{self.user} - {self.term}"
