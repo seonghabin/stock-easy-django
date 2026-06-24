@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from stocks.models import Stock
-from .models import News
+from .models import News, SavedNews
 from analyses.serializers import AiAnalysisSerializer
 
 
@@ -60,3 +60,15 @@ class NewsDetailSerializer(serializers.ModelSerializer):
     def get_related_stocks(self, obj):
         stocks = Stock.objects.filter(news_stocks__news=obj)
         return RelatedStockSerializer(stocks, many=True).data
+    
+    
+class SavedNewsSerializer(serializers.ModelSerializer):
+    news = NewsSerializer(read_only=True)
+
+    class Meta:
+        model = SavedNews
+        fields = [
+            "id",
+            "news",
+            "created_at",
+        ]
