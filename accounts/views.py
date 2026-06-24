@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from rest_framework import status
+from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -45,7 +46,23 @@ def logout_view(request):
     return Response({"detail": "로그아웃되었습니다."}, status=status.HTTP_200_OK)
 
 
+@ensure_csrf_cookie
 @api_view(["GET"])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def me(request):
-    return Response(UserSerializer(request.user).data, status=status.HTTP_200_OK)
+    if request.user.is_authenticated:
+        return Response(
+            {
+                "isAuthenticated": True,
+                "user": UserSerializer(request.user).data,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    return Response(
+        {
+            "isAuthenticated": False,
+            "user": None,
+        },
+        status=status.HTTP_200_OK,
+    )
